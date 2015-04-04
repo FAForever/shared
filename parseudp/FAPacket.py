@@ -44,9 +44,9 @@ def hexdump(data, indent):
 class FAPacket:
     def __init__(self, data):
         self.type = ord(data[0])
-        self.len  = ord(data[1]) | ord(data[2]) << 8;
+        self.len = ord(data[1]) | ord(data[2]) << 8;
         self.data = data[3:]
-        d = { }
+        d = {}
         d[0] = 1
         d[0x32] = 1
         d[0x33] = 1
@@ -110,8 +110,8 @@ class FAEncap(object):
             self.data = packet[1:]
             self.len = len(packet) - 1
         elif ord(packet[0]) == 255:
-            self.type=255
-            self.data=''
+            self.type = 255
+            self.data = ''
             self.len = len(packet) - 1
         else:
             (self.type, self.mask, self.seq, self.ack, self.seq2, self.ack2, self.len) = struct.unpack("<bLHHHHH", packet[0:15])
@@ -147,7 +147,7 @@ class FAEncap(object):
         self.offset += len_
         if offset == self.offset:
             sys.stdout.write("waarg {0} {1} {2}".format(offset, self.offset, binascii.hexlify(self.data)))
-        return FAPacket(self.data[offset : self.offset])
+        return FAPacket(self.data[offset: self.offset])
     def prepend_remaining(self, r):
         self.data = str(r) + str(self.data)
     def remaining(self):
@@ -157,15 +157,15 @@ class FAEncap(object):
 
 class FAPeerState(object):
     def __init__(self):
-        self.addr_to_cmdsrc = { }
-        self.cmdsrc_to_addr = [ ]
-        self.simtick = [ ]
-        self.ack_simtick = [ ]
+        self.addr_to_cmdsrc = {}
+        self.cmdsrc_to_addr = []
+        self.simtick = []
+        self.ack_simtick = []
     def process_egress(self, addr, packet):
         if packet.is_set_cmdsrc():
             self.cmdsource = packet.cmdsrc()
         if packet.is_advance():
-            self.simtick[self.addr_to_cmdsrc[addr] ] += packet.simtick()
+            self.simtick[self.addr_to_cmdsrc[addr]] += packet.simtick()
         elif packet.is_ack():
             s1 = self.addr_to_cmdsrc[addr]
             s2 = packet.ack_cmdsource()
@@ -182,31 +182,31 @@ class FAPeerState(object):
 
             
 
-argp = argparse.ArgumentParser(prog = "PROG")
+argp = argparse.ArgumentParser(prog="PROG")
 argp.add_argument("-e", action="store_true")
 argp.add_argument("-t", action="store_true")
 argp.add_argument("-p", action="store_true")
 
 args = argp.parse_args()
 
-remain = { }
-inflate = { }
-inflate_remain = { }
+remain = {}
+inflate = {}
+inflate_remain = {}
 
-cmdpackets_seen = { }
+cmdpackets_seen = {}
 
-future = { }
+future = {}
 
-c32 = [ 0, 0, 0 ]
+c32 = [0, 0, 0]
 c33 = 0
 c34 = 0
 tick = 0
 
-seq_seen = { }
+seq_seen = {}
 
 for line in sys.stdin:
     (src, srcport, dst, dstport, time, data) = line.split();
-    #print "*{0}*{1}*{2}*{3}*{4}*{5}".format(src, srcport, dst, dstport, time, data);
+    # print "*{0}*{1}*{2}*{3}*{4}*{5}".format(src, srcport, dst, dstport, time, data);
     e = FAEncap(src, srcport, dst, dstport, time, binascii.unhexlify(data.translate(None, ':')))
 
     if not e.connection() in seq_seen:
@@ -214,7 +214,7 @@ for line in sys.stdin:
     if not e.connection() in remain:
         remain[e.connection()] = ''
     if not e.connection() in future:
-        future[e.connection()] = { }
+        future[e.connection()] = {}
 
     s = '{0} {1} type={2} len={3: 4d}'.format(e.time, e.connection(), e.type, e.len)
     if e.type != 4:
@@ -267,7 +267,7 @@ for line in sys.stdin:
                     inflate_remain[e.connection()] = inflate[e.connection()].unconsumed_tail
 
                 e.prepend_remaining(remain[e.connection()])
-                #print e.pp_data(16);
+                # print e.pp_data(16);
                 for p in e.packets():
                     if p.type == 0x32:
                         c32[p.ack_cmdsource()] = p.simtick()
@@ -281,7 +281,7 @@ for line in sys.stdin:
                     if p.can_decode():
                         print '       ', p.decode()
                     else:
-                        s='        {0:02x} {1: 4d}    '.format(p.type, p.len - 3)
+                        s = '        {0:02x} {1: 4d}    '.format(p.type, p.len - 3)
                         print s, p.pp_data(len(s) + 1)
                 foo = ""
                 foo = ''
@@ -292,6 +292,6 @@ for line in sys.stdin:
                 else:
                     foo += ' '
                 if args.t:
-                    print "TICK", ''.join([ str(c32[i]) + ' ' for i in range(0, len(c32)) ]), c33, c34, tick, foo
+                    print "TICK", ''.join([str(c32[i]) + ' ' for i in range(0, len(c32))]), c33, c34, tick, foo
 
                 remain[e.connection()] = e.remaining()
