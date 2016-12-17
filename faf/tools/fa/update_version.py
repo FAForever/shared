@@ -13,7 +13,7 @@ import shutil
 from docopt import docopt
 
 
-def update_exe_version(source: str, destination: str, version: str):
+def update_exe_version(source, destination, version):
     """
     :param source: Path to the static base copy of ForgedAlliance.exe - Hardcoded in API
     :param destination: Path this update is being copied to
