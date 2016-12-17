@@ -9,7 +9,7 @@ import os
 logger = logging.getLogger(__name__)
 
 
-def build_mod(mod_folder: Path, mod_info, temp_path: Path):
+def build_mod(mod_folder, mod_info, temp_path):
     """
     Perform deployment of game code (FA repo) on this machine
 
