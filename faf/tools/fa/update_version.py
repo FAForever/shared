@@ -21,9 +21,9 @@ def update_exe_version(source, destination, version):
     :return:
     """
 
-    shutil.copyfile(source, "ForgedAlliance.%s.exe" % version)
-    destination = destination / "ForgedAlliance.%s.exe" % version
-    shutil.move(source, destination)
+    shutil.copyfile(str(source), "ForgedAlliance.%s.exe" % version)
+    destination = destination / ("ForgedAlliance.%s.exe" % version)
+    shutil.move(str(source), str(destination))
 
     addr = [0xd3d3f, 0x47612c, 0x476665]
     f = open("ForgedAlliance.%s.exe" % version, 'rb+')
@@ -33,7 +33,7 @@ def update_exe_version(source, destination, version):
         f.seek(a+1, 0)
         f.write(v)
     f.close()
-    print("Saved ForgedAlliance.%s.exe".format(version))
+    print("Saved ForgedAlliance.%s.exe" % version)
     return f
 
 if __name__ == '__main__':
