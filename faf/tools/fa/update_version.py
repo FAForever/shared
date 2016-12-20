@@ -10,8 +10,10 @@ Options:
 """
 import struct
 import shutil
+import logging
 from docopt import docopt
 
+logger = logging.getLogger(__name__)
 
 def update_exe_version(source, destination, version):
     """
@@ -25,14 +27,14 @@ def update_exe_version(source, destination, version):
     shutil.copyfile(str(source), str(destination))
 
     addr = [0xd3d3f, 0x47612c, 0x476665]
-    f = open("ForgedAlliance.%s.exe" % version, 'rb+')
+    f = open(str(destination), 'rb+')
 
     for a in addr:
         v = struct.pack("<L", int(version))
         f.seek(a+1, 0)
         f.write(v)
     f.close()
-    print("Saved ForgedAlliance.%s.exe" % version)
+    logger.info("Saved ForgedAlliance.%s.exe" % version)
     return f
 
 if __name__ == '__main__':
