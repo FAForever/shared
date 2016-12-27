@@ -7,6 +7,7 @@ Usage:
 
 Options:
    --file=<file>   The binary file to update [default: ForgedAlliance.exe]
+   --dest=<dest>   The folder path where to create the patched filed [default: .]
 """
 import struct
 import shutil
@@ -39,5 +40,5 @@ def update_exe_version(source, destination, version):
 
 if __name__ == '__main__':
     arguments = docopt(__doc__)
-    source, destination, version = arguments.get('--file'), arguments.get('destination'), arguments.get('<version>')
+    source, destination, version = arguments.get('--file'), arguments.get('--dest'), arguments.get('<version>')
     update_exe_version(source, destination, version)
