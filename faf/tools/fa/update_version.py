@@ -9,9 +9,11 @@ Options:
    --file=<file>   The binary file to update [default: ForgedAlliance.exe]
    --dest=<dest>   The folder path where to create the patched filed [default: .]
 """
+import os
 import struct
 import shutil
 import logging
+
 from docopt import docopt
 
 logger = logging.getLogger(__name__)
@@ -24,7 +26,8 @@ def update_exe_version(source, destination, version):
     :return:
     """
 
-    destination = destination / ("ForgedAlliance.%s.exe" % version)
+    # os.path.join due to Python 2.7 compatibility
+    destination = os.path.join(str(destination), "ForgedAlliance.%s.exe" % version)
     shutil.copyfile(str(source), str(destination))
 
     addr = [0xd3d3f, 0x47612c, 0x476665]
