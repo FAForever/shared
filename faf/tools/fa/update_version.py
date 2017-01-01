@@ -3,7 +3,7 @@ Updates the version in the binary executable of the Forged Alliance game. Will w
 file.
 
 Usage:
-   update_version <version> [--file=<file>]
+   update_version <version> [--file=<file>] [--dest=<dest>]
 
 Options:
    --file=<file>   The binary file to update [default: ForgedAlliance.exe]
